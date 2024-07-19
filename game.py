@@ -1,3 +1,4 @@
+import turtle
 from time import sleep
 from turtle import Turtle
 from random import randint
@@ -7,6 +8,7 @@ class Game:
     def __init__(self) -> None:
         self.segments = []
         self.create_snake()
+        self.head = self.segments[0]
         self.score = 0
         self.food = ""
 
@@ -33,13 +35,21 @@ class Game:
         self.food.color("white")
         self.segments.append(self.food)
 
-    def check_collision(self, dist):
-        pass
+    def game_over(self, screen_height, screen_width):
+        if (
+            self.head.xcor() > (screen_width / 2)
+            or self.head.xcor() < -(screen_width / 2)
+            or self.head.ycor() > (screen_height / 2)
+            or self.head.ycor() < -(screen_height / 2)
+        ):
+            turtle.done()
+            print(f"\nYour score is {self.score}\n\n")
 
     def play(self, screen):
         game_on = True
-        threshold_dist = 10
-        self.generate_food(screen.window_width(), screen.window_height())
+        s_width = screen.window_width()
+        s_height = screen.window_height()
+        self.generate_food(s_width, s_height)
 
         while game_on:
             screen.update()
@@ -50,8 +60,10 @@ class Game:
                 new_ycor = self.segments[segment_num - 1].ycor()
                 self.segments[segment_num].goto(new_xcor, new_ycor)
 
-            self.segments[0].forward(10)
+            self.head.forward(10)
 
-            if self.food.distance(self.segments[0]) <= threshold_dist:
+            self.game_over(s_height, s_width)
+
+            if self.food.distance(self.head) <= 10:
                 self.grow()
-                self.generate_food(screen.window_width(), screen.window_height())
+                self.generate_food(s_width, s_height)
