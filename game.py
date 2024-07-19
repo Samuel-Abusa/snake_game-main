@@ -35,7 +35,11 @@ class Game:
         self.food.color("white")
         self.segments.append(self.food)
 
-    def game_over(self, screen_height, screen_width):
+    def game_over(
+        self,
+        screen_height,
+        screen_width,
+    ):
         if (
             self.head.xcor() > (screen_width / 2)
             or self.head.xcor() < -(screen_width / 2)
@@ -46,12 +50,11 @@ class Game:
             print(f"\nYour score is {self.score}\n\n")
 
     def play(self, screen):
-        game_on = True
         s_width = screen.window_width()
         s_height = screen.window_height()
         self.generate_food(s_width, s_height)
 
-        while game_on:
+        while True:
             screen.update()
             sleep(0.1)
 
@@ -62,7 +65,10 @@ class Game:
 
             self.head.forward(10)
 
-            self.game_over(s_height, s_width)
+            self.game_over(
+                s_height,
+                s_width,
+            )
 
             if self.food.distance(self.head) <= 10:
                 self.grow()
