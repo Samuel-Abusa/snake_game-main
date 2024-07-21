@@ -2,57 +2,55 @@ import turtle
 from time import sleep
 from turtle import Turtle
 from random import randint
+from scoreboard import Scoreboard
 
 
 class Game:
     def __init__(self) -> None:
         self.segments = []
-        self.create_snake()
+        self.create_snake(7)
         self.head = self.segments[0]
         self.score = 0
-        self.food = ""
+        self.food = Turtle("circle")
+        self.food.color("orange")
+        self.food.penup()
+        self.food.speed("fastest")
 
-    def create_snake(self):
-        for n in range(7):
+    def create_snake(self, segment_length):
+        for n in range(segment_length):
             segment = Turtle("square")
             segment.color("white")
             segment.penup()
-            segment.goto(x=-n * 20, y=0)
+            segment.hideturtle()
+            if segment_length > 1:
+                segment.goto(x=-n * 20, y=0)
+            else:
+                segment.goto(self.segments[len(self.segments) - 1].position())
             self.segments.append(segment)
+            segment.showturtle()
 
-    def generate_food(self, screen_width, screen_height):
+    def refresh_food(self, screen_width, screen_height):
         random_xcor = randint(-int(screen_width / 2) + 20, int(screen_width / 2) - 20)
         random_ycor = randint(-int(screen_height / 2) + 20, int(screen_height / 2) - 20)
-        food = Turtle("circle")
-        food.color("orange")
-        food.penup()
-        food.goto(x=random_xcor, y=random_ycor)
-        self.food = food
+        self.food.goto(random_xcor, random_ycor)
 
-    def grow(self):
-        self.score += 1
-        self.food.shape("square")
-        self.food.color("white")
-        self.segments.append(self.food)
-
-    def game_over(
-        self,
-        screen_height,
-        screen_width,
-    ):
+    def game_over(self, screen_height, screen_width, board):
         if (
             self.head.xcor() > (screen_width / 2)
             or self.head.xcor() < -(screen_width / 2)
             or self.head.ycor() > (screen_height / 2)
             or self.head.ycor() < -(screen_height / 2)
         ):
+            board.final_score(self.score)
             turtle.done()
-            print(f"\nYour score is {self.score}\n\n")
 
     def play(self, screen):
         s_width = screen.window_width()
         s_height = screen.window_height()
-        self.generate_food(s_width, s_height)
+        scoreboard = Scoreboard(s_height)
+
+        scoreboard.update_score(self.score)
+        self.refresh_food(s_width, s_height)
 
         while True:
             screen.update()
@@ -65,11 +63,10 @@ class Game:
 
             self.head.forward(10)
 
-            self.game_over(
-                s_height,
-                s_width,
-            )
+            self.game_over(s_height, s_width, scoreboard)
 
-            if self.food.distance(self.head) <= 10:
-                self.grow()
-                self.generate_food(s_width, s_height)
+            if self.food.distance(self.head) <= 15:
+                self.score += 1
+                self.create_snake(1)
+                scoreboard.update_score(self.score)
+                self.refresh_food(s_width, s_height)
