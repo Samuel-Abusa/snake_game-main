@@ -2,30 +2,25 @@ from turtle import Turtle
 
 
 class Scoreboard(Turtle):
-    def __init__(self, screen_height) -> None:
+    def __init__(self):
         super().__init__()
         self.score = 0
+        self.high_score = 0
         self.color("white")
-        self.hideturtle()
         self.penup()
-        self.goto(0, int(screen_height / 2) - 50)
-        self.write_score()
-
-    def write_score(self):
-        self.write(
-            f"Score: {self.score}", align="center", font=("Courier", 14, "normal")
-        )
+        self.hideturtle()
+        self.goto(0, 270)
+        self.update_score()
 
     def update_score(self):
         self.clear()
-        self.score += 1
-        self.write_score()
-
-    def final_score(self):
-        self.clear()
-        self.goto(0, 0)
         self.write(
-            f"      Game Over.\nYour final score is {self.score}",
+            f"Score: {self.score} High Score: {self.high_score}",
             align="center",
-            font=("Courier", 24, "normal"),
+            font=("Courier", 14, "normal"),
+        )
+
+    def update_high_score(self):
+        self.high_score = (
+            self.score if self.score > self.high_score else self.high_score
         )
