@@ -9,8 +9,11 @@ class Scoreboard(Turtle):
         self.penup()
         self.hideturtle()
         self.goto(0, 270)
-        with open("high_score.txt", "r") as high_score_file:
-            self.high_score = int(high_score_file.read())
+        try:
+            with open("high_score.txt", "r") as high_score_file:
+                self.high_score = int(high_score_file.read())
+        except FileNotFoundError:
+            self.high_score = 0
         self.update_score()
 
     def update_score(self):
